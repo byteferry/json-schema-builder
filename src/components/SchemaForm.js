@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { Form, Message } from 'semantic-ui-react'
+import { Form, Message, Header } from 'semantic-ui-react'
 
 class SchemaForm extends Component {
   constructor () {
@@ -21,12 +21,12 @@ class SchemaForm extends Component {
 
   validateData () {
     var msg
-    if (typeof this.state.schema.name !== 'string' || this.state.schema.name === 0) {
-      msg = 'Please enter a name value'
-    } else if (this.state.schema.name.length > 40) {
-      msg = 'The maximum allowed length for names is 40 characters'
-    } else if (this.state.schema.name.match(/^\s+/) || this.state.schema.name.match(/\s+$/)) {
-      msg = 'Leading and trailing spaces are not allowed in the name'
+    if (typeof this.state.schema.title !== 'string' || this.state.schema.title === 0) {
+      msg = 'Please enter a title value'
+    } else if (typeof this.state.schema.description !== 'string' || this.state.schema.description === 0) {
+      msg = 'Please enter a description value'
+    } else if (typeof this.state.schema.id !== 'string' || this.state.schema.id === 0) {
+      msg = 'Please enter an id value'
     } else if (!Object.keys(this.state.type).length) {
       msg = 'You must select at least one type'
     }
@@ -76,6 +76,14 @@ class SchemaForm extends Component {
 
     var schemaObject = {}
 
+    // set the $schema value
+    schemaObject['$schema'] = 'http://json-schema.org/schema#'
+
+    // Set schema Details
+    schemaObject.title = this.state.schema.title
+    schemaObject.description = this.state.schema.description
+    schemaObject.id = this.state.schema.id
+
     // Set the type
     if (Object.keys(this.state.type).length > 1) {
       schemaObject.type = Object.keys(this.state.type)
@@ -83,17 +91,27 @@ class SchemaForm extends Component {
       schemaObject.type = Object.keys(this.state.type)[0]
     }
 
-    this.props.addSchemaObject(this.state.schema.name, schemaObject)
+    this.props.addSchemaObject(this.state.schema.title, schemaObject)
   }
 
   render () {
     return (
       <div>
         <Form onSubmit={e => this.generateSchemaObject(e)}>
+          <Header as='h4'>Schema Details</Header>
           <Form.Field>
-            <label>Schema Name</label>
-            <Form.Input placeholder='Schema Name' name='schema-name' onChange={this.handleChange} />
+            <label>Title</label>
+            <Form.Input placeholder='Schema Title' name='schema-title' onChange={this.handleChange} />
           </Form.Field>
+          <Form.Field>
+            <label>Description</label>
+            <Form.Input placeholder='Schema Description' name='schema-description' onChange={this.handleChange} />
+          </Form.Field>
+          <Form.Field>
+            <label>ID</label>
+            <Form.Input placeholder='Schema ID' name='schema-id' onChange={this.handleChange} />
+          </Form.Field>
+          <Header as='h4'>Validators</Header>
           <Form.Group grouped>
             <label>Type</label>
             <Form.Checkbox label='String' name='type-string' onChange={this.handleChange} />
