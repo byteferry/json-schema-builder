@@ -8,40 +8,58 @@ class Result extends Component {
   constructor () {
     super()
 
-    this.convertToString = this.convertToString.bind(this)
+    this.convertToStrings = this.convertToStrings.bind(this)
 
     this.state = {
-      resultString: ''
+      schemaStrings: {}
     }
   }
 
   componentDidMount () {
-    if (this.props.result) {
-      this.convertToString()
+    if (Object.keys(this.props.schemaObjects).length) {
+      this.convertToStrings(this.props.schemaObjects)
       highlight.highlightBlock(findDOMNode(this.refs.code))
     }
   }
 
-  componentDidUpdate () {
-    highlight.initHighlighting.called = false
-    highlight.highlightBlock(findDOMNode(this.refs.code))
+  componentWillReceiveProps (nextProps) {
+    if (Object.keys(nextProps.schemaObjects).length) {
+      this.convertToStrings(nextProps.schemaObjects)
+    }
   }
 
-  convertToString (resultObj) {
-    var resultString = JSON.stringify(resultObj, null, 4)
-    this.setState({resultString: resultString})
+  componentDidUpdate () {
+    if (Object.keys(this.state.schemaStrings).length) {
+      highlight.initHighlighting.called = false
+      highlight.highlightBlock(findDOMNode(this.refs.code))
+    }
+  }
+
+  convertToStrings (schemaObjects) {
+    var schemaStrings = {}
+    for (var schemaName of Object.keys(schemaObjects)) {
+      schemaStrings[schemaName] = JSON.stringify(schemaObjects[schemaName], null, 4)
+    }
+    this.setState({schemaStrings: schemaStrings})
   }
 
   render () {
     return (
       <Segment attached='bottom' className='Result'>
         <Header as='h3'>Result</Header>
-        {this.props.result ? (
-          <pre className='codeBlock'>
-            <code className='json' ref='code'>
-              {this.state.resultString}
-            </code>
-          </pre>
+        {Object.keys(this.state.schemaStrings).length ? (
+          Object.keys(this.state.schemaStrings).map((schemaName, i) => {
+            return (
+              <div key={i}>
+                <Header as='h5'>{schemaName}</Header>
+                <pre className='codeBlock'>
+                  <code className='json' ref='code'>
+                    {this.state.schemaStrings[schemaName]}
+                  </code>
+                </pre>
+              </div>
+            )
+          })
         ) : (
           <p>Configure some options to see your schema.</p>
         )}
@@ -51,7 +69,7 @@ class Result extends Component {
 }
 
 Result.propTypes = {
-  result: PropTypes.object
+  schemaObjects: PropTypes.object
 }
 
 export default Result
