@@ -33,7 +33,6 @@ class Result extends Component {
   }
 
   render () {
-    console.log(this.resultString)
     return (
       <Segment attached='bottom' className='Result'>
         <Header as='h3'>Result</Header>
