@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "JSON Schema Builder",
+  "name": "JSON Schema Builder",
   "icons": [
     {
       "src": "favicon.ico",
