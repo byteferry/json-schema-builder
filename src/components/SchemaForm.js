@@ -23,7 +23,7 @@ class SchemaForm extends Component {
     // setup the initial state
     this.state = {
       schema: {},
-      type: null,
+      type: 'number',
       warnings: {
         validation: null
       }
