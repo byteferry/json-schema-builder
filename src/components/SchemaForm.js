@@ -1,8 +1,14 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Form, Message, Header, Segment } from 'semantic-ui-react'
-import MultipleOptions from './furtherOptions/MultipleOptions'
 import { dataTypeOptions } from '../enums'
+
+import StringOptions from './furtherOptions/StringOptions'
+import NumberOptions from './furtherOptions/NumberOptions'
+import ObjectOptions from './furtherOptions/ObjectOptions'
+import ArrayOptions from './furtherOptions/ArrayOptions'
+import EnumsOptions from './furtherOptions/EnumsOptions'
+import MultipleOptions from './furtherOptions/MultipleOptions'
 
 class SchemaForm extends Component {
   constructor () {
@@ -109,6 +115,21 @@ class SchemaForm extends Component {
   renderFurtherOptions () {
     let content = null
     switch (this.state.type) {
+      case 'string':
+        content = <StringOptions ref='_further' />
+        break
+      case 'number':
+        content = <NumberOptions ref='_further' />
+        break
+      case 'object':
+        content = <ObjectOptions ref='_further' />
+        break
+      case 'array':
+        content = <ArrayOptions ref='_further' />
+        break
+      case 'enums':
+        content = <EnumsOptions ref='_further' />
+        break
       case 'multiple':
         content = <MultipleOptions ref='_further' />
         break

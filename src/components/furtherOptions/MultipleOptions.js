@@ -7,6 +7,7 @@ class MultipleOptions extends Component {
 
     // bind functions
     this.handleChange = this.handleChange.bind(this)
+    this.extractOptions = this.extractOptions.bind(this)
 
     // create intial state
     this.state = {
