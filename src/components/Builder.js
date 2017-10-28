@@ -8,14 +8,14 @@ class Builder extends Component {
     return (
       <Segment attached className='Builder'>
         <Header as='h3'>Builder</Header>
-        <SchemaForm addSchemaObject={this.props.addSchemaObject} />
+        <SchemaForm setSchema={this.props.setSchema} />
       </Segment>
     )
   }
 }
 
 Builder.propTypes = {
-  addSchemaObject: PropTypes.func.isRequired
+  setSchema: PropTypes.func.isRequired
 }
 
 export default Builder

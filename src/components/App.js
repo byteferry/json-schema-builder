@@ -8,18 +8,16 @@ class App extends Component {
   constructor () {
     super()
 
-    this.addSchemaObject = this.addSchemaObject.bind(this)
+    this.setSchema = this.setSchema.bind(this)
 
     this.state = {
-      schemaObjects: {}
+      schema: null
     }
   }
 
-  addSchemaObject (name, newSchemaObject) {
+  setSchema (newSchema) {
     this.setState(prevState => {
-      let newSchemaObjects = Object.assign({}, prevState.schemaObjects)
-      newSchemaObjects[name] = newSchemaObject
-      return {schemaObjects: newSchemaObjects}
+      return {schema: newSchema}
     })
   }
 
@@ -29,8 +27,8 @@ class App extends Component {
         <Segment attached='top'>
           <Header as='h1'>JSON Schema Builder</Header>
         </Segment>
-        <Builder addSchemaObject={this.addSchemaObject} />
-        <Result schemaObjects={this.state.schemaObjects} />
+        <Builder setSchema={this.setSchema} />
+        <Result schema={this.state.schema} />
       </div>
     )
   }

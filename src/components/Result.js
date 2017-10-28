@@ -8,58 +8,73 @@ class Result extends Component {
   constructor () {
     super()
 
-    this.convertToStrings = this.convertToStrings.bind(this)
+    // Bind functions to be used
+    this.convertToString = this.convertToString.bind(this)
 
+    // Setup initial state
     this.state = {
-      schemaStrings: {}
+      schemaString: null
     }
   }
 
+  /**
+   * When the component first mounts, if there is a schema defined, call the
+   * function to convert it to a string, add it in state so that it is rendered
+   * and highlight the code block
+   */
   componentDidMount () {
-    if (Object.keys(this.props.schemaObjects).length) {
-      this.convertToStrings(this.props.schemaObjects)
+    if (this.props.schema) {
+      this.convertToString(this.props.schema)
       highlight.highlightBlock(findDOMNode(this.refs.code))
     }
   }
 
+  /**
+   * When the component recieves new props, update the schema if required
+   * @param  {object} nextProps The incoming, updated props
+   */
   componentWillReceiveProps (nextProps) {
-    if (Object.keys(nextProps.schemaObjects).length) {
-      this.convertToStrings(nextProps.schemaObjects)
+    // TODO: Don't bother updating if the new schema is the same as the old
+    // schema
+    if (nextProps.schema) {
+      this.convertToString(nextProps.schema)
     }
   }
 
+  /**
+   * If the component has updated then update the highlighting in the code block
+   */
   componentDidUpdate () {
-    if (Object.keys(this.state.schemaStrings).length) {
+    if (this.state.schemaString) {
       highlight.initHighlighting.called = false
       highlight.highlightBlock(findDOMNode(this.refs.code))
     }
   }
 
-  convertToStrings (schemaObjects) {
-    var schemaStrings = {}
-    for (var schemaName of Object.keys(schemaObjects)) {
-      schemaStrings[schemaName] = JSON.stringify(schemaObjects[schemaName], null, 4)
-    }
-    this.setState({schemaStrings: schemaStrings})
+  /**
+   * This function takes a JSON schema object and converts it to a string,
+   * with some formatting, to be displayed to the user
+   * @param  {object} schemaObject A JSON schema object to be stringified
+   */
+  convertToString (schemaObject) {
+    var schemaString
+    schemaString = JSON.stringify(schemaObject, null, 4)
+    this.setState({schemaString: schemaString})
   }
 
   render () {
+    console.log(JSON.stringify(this.state.schemaString))
     return (
       <Segment attached='bottom' className='Result'>
         <Header as='h3'>Result</Header>
-        {Object.keys(this.state.schemaStrings).length ? (
-          Object.keys(this.state.schemaStrings).map((schemaName, i) => {
-            return (
-              <div key={i}>
-                <Header as='h5'>{schemaName}</Header>
-                <pre className='codeBlock'>
-                  <code className='json' ref='code'>
-                    {this.state.schemaStrings[schemaName]}
-                  </code>
-                </pre>
-              </div>
-            )
-          })
+        {this.state.schemaString ? (
+          <div>
+            <pre className='codeBlock'>
+              <code className='json' ref='code'>
+                {this.state.schemaString}
+              </code>
+            </pre>
+          </div>
         ) : (
           <p>Configure some options to see your schema.</p>
         )}
@@ -69,7 +84,7 @@ class Result extends Component {
 }
 
 Result.propTypes = {
-  schemaObjects: PropTypes.object
+  schema: PropTypes.object
 }
 
 export default Result
