@@ -63,7 +63,6 @@ class Result extends Component {
   }
 
   render () {
-    console.log(JSON.stringify(this.state.schemaString))
     return (
       <Segment attached='bottom' className='Result'>
         <Header as='h3'>Result</Header>
