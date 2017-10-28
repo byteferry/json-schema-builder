@@ -8,3 +8,12 @@ exports.dataTypeOptions = [
   {key: 'type-enums', value: 'enums', text: 'Enums'},
   {key: 'type-multiple', value: 'multiple', text: 'Multiple'}
 ]
+
+exports.stringFormats = [
+  {key: 'format-datetime', value: 'date-time', text: 'Date-Time'},
+  {key: 'format-email', value: 'email', text: 'Email'},
+  {key: 'format-hostname', value: 'hostname', text: 'Hostname'},
+  {key: 'format-ipv4', value: 'ipv4', text: 'IPv4'},
+  {key: 'format-ipv6', value: 'ipv6', text: 'IPv6'},
+  {key: 'format-uri', value: 'uri', text: 'URI'}
+]
