@@ -17,3 +17,15 @@ exports.stringFormats = [
   {key: 'format-ipv6', value: 'ipv6', text: 'IPv6'},
   {key: 'format-uri', value: 'uri', text: 'URI'}
 ]
+
+exports.enumValues = [
+  {key: 'enum-string', value: 'string', text: 'String'},
+  {key: 'enum-number', value: 'number', text: 'Number'},
+  {key: 'enum-boolean', value: 'boolean', text: 'Boolean'},
+  {key: 'enum-null', value: 'null', text: 'Null'}
+]
+
+exports.booleanOptions = [
+  {key: 'bool-true', value: 'true', text: 'true'},
+  {key: 'bool-false', value: 'false', text: 'false'}
+]
