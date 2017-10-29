@@ -91,6 +91,7 @@ class SchemaForm extends Component {
     var schemaObject = {}
 
     // set the $schema value
+    // TODO: make this configurable
     schemaObject['$schema'] = 'http://json-schema.org/schema#'
 
     // Set schema Details

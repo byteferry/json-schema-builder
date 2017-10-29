@@ -37,6 +37,7 @@ class StringOptions extends Component {
    * @param  {any} value The new value of the input which was changed
    */
   handleChange (e, { name, value }) {
+    // TODO: Make numbers actually be numbers
     this.setState(prevState => {
       let options = Object.assign({}, prevState.options)
       if (value) {

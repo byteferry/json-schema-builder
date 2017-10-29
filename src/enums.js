@@ -29,3 +29,8 @@ exports.booleanOptions = [
   {key: 'bool-true', value: 'true', text: 'true'},
   {key: 'bool-false', value: 'false', text: 'false'}
 ]
+
+exports.arrayTypeOptions = [
+  {key: 'array-single', value: 'single', text: 'Single'},
+  {key: 'array-collection', value: 'collection', text: 'Collection'}
+]

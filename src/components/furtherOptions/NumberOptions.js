@@ -23,7 +23,9 @@ class NumberOptions extends Component {
       enabled: {
         multipleOf: false,
         minimum: false,
-        maximum: false
+        maximum: false,
+        exclusiveMinimum: false,
+        exclusiveMaximum: false
       }
     }
   }
