@@ -48,7 +48,7 @@ class NumberOptions extends Component {
         case 'minimum':
         case 'maximum':
         case 'multipleOf':
-          options[name] = value
+          options[name] = parseInt(value, 10)
           break
         case 'exclusiveMinimum':
         case 'exclusiveMaximum':

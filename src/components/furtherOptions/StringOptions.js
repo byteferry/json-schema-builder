@@ -37,7 +37,6 @@ class StringOptions extends Component {
    * @param  {any} value The new value of the input which was changed
    */
   handleChange (e, { name, value }) {
-    // TODO: Make numbers actually be numbers
     this.setState(prevState => {
       let options = Object.assign({}, prevState.options)
       if (value) {
@@ -80,7 +79,15 @@ class StringOptions extends Component {
 
     Object.keys(this.state.options).forEach(key => {
       if (this.state.enabled[key] && this.state.options[key]) {
-        options[key] = this.state.options[key]
+        switch (key) {
+          case 'minLength':
+          case 'maxLength':
+            options[key] = parseInt(this.state.options[key], 10)
+            break
+          default:
+            options[key] = this.state.options[key]
+            break
+        }
       }
     })
 
