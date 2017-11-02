@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Form, Checkbox, Header, Segment, Button, Grid } from 'semantic-ui-react'
-import { dataTypeOptions, propertyTypeOptions } from '../../enums'
+import { dataTypeOptions, propertyTypeOptions, additionalPropertiesOptions } from '../../enums'
 
 import StringOptions from './StringOptions'
 import NumberOptions from './NumberOptions'
@@ -39,7 +39,11 @@ class ObjectOptions extends Component {
         minProperties: null,
         maxProperties: null
       },
-      properties: []
+      properties: [],
+      additionalProperties: {
+        allowed: false,
+        type: null
+      }
     }
   }
 
@@ -49,12 +53,21 @@ class ObjectOptions extends Component {
    * @param  {string} name  The name of the input which was changed
    * @param  {any} value The new value of the input which was changed
    */
-  handleChange (e, { name, value }) {
+  handleChange (e, { name, value, checked }) {
     this.setState(prevState => {
       let options = Object.assign({}, prevState.options)
-      options[name] = value
+      let additionalProperties = Object.assign({}, prevState.additionalProperties)
+      if (name.indexOf('additionalProperties') > -1) {
+        if (name.split('-')[1] === 'allowed') {
+          additionalProperties.allowed = checked
+        } else {
+          additionalProperties.type = value
+        }
+      } else {
+        options[name] = value
+      }
 
-      return {options}
+      return {options, additionalProperties}
     })
   }
 
@@ -145,10 +158,21 @@ class ObjectOptions extends Component {
         Object.assign(patternProperties[item.name], this.refs[`_further-${i}`].extractOptions())
       }
     }
-
     options.properties = properties
     options.required = required
     options.patternProperties = patternProperties
+
+    // sort out the additionalProperties
+    if (!this.state.additionalProperties.allowed) {
+      options.additionalProperties = false
+    } else if (this.state.additionalProperties.type === 'any') {
+      options.additionalProperties = true
+    } else {
+      options.additionalProperties = {
+        type: this.state.additionalProperties.type
+      }
+      Object.assign(options.additionalProperties, this.refs._further.extractOptions())
+    }
 
     return options
   }
@@ -328,6 +352,30 @@ class ObjectOptions extends Component {
           </Segment.Group>
         }
         <Button secondary onClick={this.addItem}>Add Property</Button>
+        <Header as='h5'>Additional Properties</Header>
+        <Form.Field>
+          <label>Allowed?</label>
+          <Form.Checkbox
+            name='additionalProperties-allowed'
+            checked={this.state.additionalProperties.allowed}
+            onChange={this.handleChange} />
+        </Form.Field>
+        {
+          this.state.additionalProperties.allowed &&
+          <Form.Field>
+            <label>Type</label>
+            <Form.Select
+              placeholder='Choose Type'
+              name='additionalProperties-type'
+              options={additionalPropertiesOptions}
+              value={this.state.additionalProperties.type}
+              onChange={this.handleChange} />
+          </Form.Field>
+        }
+        {
+          this.state.additionalProperties.type &&
+          this.renderFurtherOptions(this.state.additionalProperties.type)
+        }
       </div>
     )
   }

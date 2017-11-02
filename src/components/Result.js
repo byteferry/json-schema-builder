@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { findDOMNode } from 'react-dom'
 import { Segment, Header } from 'semantic-ui-react'
 import highlight from 'highlight.js'
+import 'highlight.js/styles/github.css'
 
 class Result extends Component {
   constructor () {
