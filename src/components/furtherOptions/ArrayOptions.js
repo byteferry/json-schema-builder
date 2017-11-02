@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Form, Header, Checkbox, Segment, Button } from 'semantic-ui-react'
-import { arrayTypeOptions, dataTypeOptions } from '../../enums'
+import { arrayTypeOptions, dataTypeOptions, additionalPropertiesOptions } from '../../enums'
 
 import StringOptions from './StringOptions'
 import NumberOptions from './NumberOptions'
@@ -26,18 +26,20 @@ class ArrayOptions extends Component {
       options: {
         minItems: null,
         maxItems: null,
-        uniqueItems: null,
-        additionalItems: null
+        uniqueItems: null
       },
       enabled: {
         minItems: false,
         maxItems: false,
-        uniqueItems: false,
-        additionalItems: false // QUESTION: Can this be an object?
+        uniqueItems: false
       },
       arrayType: null,
       single: null,
-      collection: []
+      collection: [],
+      additionalItems: {
+        allowed: false,
+        type: null
+      }
     }
   }
 
@@ -61,15 +63,24 @@ class ArrayOptions extends Component {
         return {collection}
       }
 
+      let additionalItems = Object.assign({}, prevState.additionalItems)
+      if (name.indexOf('additionalItems') > -1) {
+        if (name.split('-')[1] === 'allowed') {
+          additionalItems.allowed = checked
+        } else {
+          additionalItems.type = value
+        }
+      }
+
       let options = Object.assign({}, prevState.options)
       let enabled = Object.assign({}, prevState.enabled)
-      if (name === 'uniqueItems' || name === 'additionalItems') {
+      if (name === 'uniqueItems') {
         options[name] = checked
         enabled[name] = checked
       } else {
         options[name] = value
       }
-      return {options, enabled}
+      return {options, enabled, additionalItems}
     })
   }
 
@@ -121,6 +132,18 @@ class ArrayOptions extends Component {
       let items = this.state.collection.map((item, index) => {
         return this.refs[`_further-${index}`].extractOptions()
       })
+      if (!this.state.additionalItems.allowed) {
+        options.additionalItems = false
+      } else if (this.state.additionalItems.type === 'any') {
+        options.additionalItems = true
+      } else {
+        options.additionalItems = {
+          type: this.state.additionalItems.type
+        }
+        if (!['boolean', 'null'].includes(this.state.additionalItems.type)) {
+          Object.assign(options.additionalItems, this.refs._further.extractOptions())
+        }
+      }
       options = Object.assign(options, {items: items})
     }
 
@@ -162,6 +185,7 @@ class ArrayOptions extends Component {
     if (this.state.arrayType === 'single') {
       content = (
         <div>
+          <Header as='h5'>Items</Header>
           <Form.Field>
             <label>Type</label>
             <Form.Select
@@ -182,6 +206,7 @@ class ArrayOptions extends Component {
     } else if (this.state.arrayType === 'collection') {
       content = (
         <div>
+          <Header as='h5'>Items</Header>
           {
             !!this.state.collection.length && (
               <Segment.Group>
@@ -246,7 +271,6 @@ class ArrayOptions extends Component {
   }
 
   render () {
-    // TODO: Make sure additionalItems can be set to false
     return (
       <div>
         <Header as='h4'>Array Options</Header>
@@ -254,13 +278,6 @@ class ArrayOptions extends Component {
           <Form.Field>
             <label>Array Type</label>
             <Form.Select placeholder='Choose Type' name='enable-type' options={arrayTypeOptions} onChange={(e, {value}) => this.setState({arrayType: value})} />
-            {
-              this.state.arrayType === 'collection' &&
-              <div className='labelContainer'>
-                <Form.Checkbox name='additionalItems' onChange={this.handleChange} />
-                <span className='label'>additionalItems?</span>
-              </div>
-            }
           </Form.Field>
           <Form.Field>
             <div className='labelContainer'>
@@ -292,6 +309,36 @@ class ArrayOptions extends Component {
         <div>
           {this.renderValidators()}
         </div>
+        <br />
+        {
+          this.state.arrayType === 'collection' &&
+          <div>
+            <Header as='h5'>Additional Items</Header>
+            <div className='labelContainer'>
+              <Checkbox
+                name='additionalItems-allowed'
+                checked={this.state.additionalItems.allowed}
+                onChange={this.handleChange} />
+              <span className='label'>Allowed?</span>
+            </div>
+            {
+              this.state.additionalItems.allowed &&
+              <Form.Field>
+                <label>Type</label>
+                <Form.Select
+                  placeholder='Choose Type'
+                  name='additionalItems-type'
+                  options={additionalPropertiesOptions}
+                  value={this.state.additionalItems.type}
+                  onChange={this.handleChange} />
+              </Form.Field>
+            }
+            {
+              this.state.additionalItems.allowed && this.state.additionalItems.type &&
+              this.renderFurtherOptions(this.state.additionalItems.type)
+            }
+          </div>
+        }
       </div>
     )
   }

@@ -171,7 +171,9 @@ class ObjectOptions extends Component {
       options.additionalProperties = {
         type: this.state.additionalProperties.type
       }
-      Object.assign(options.additionalProperties, this.refs._further.extractOptions())
+      if (!['boolean', 'null'].includes(this.state.additionalItems.type)) {
+        Object.assign(options.additionalProperties, this.refs._further.extractOptions())
+      }
     }
 
     return options
@@ -353,13 +355,13 @@ class ObjectOptions extends Component {
         }
         <Button secondary onClick={this.addItem}>Add Property</Button>
         <Header as='h5'>Additional Properties</Header>
-        <Form.Field>
-          <label>Allowed?</label>
-          <Form.Checkbox
+        <div className='labelContainer'>
+          <Checkbox
             name='additionalProperties-allowed'
             checked={this.state.additionalProperties.allowed}
             onChange={this.handleChange} />
-        </Form.Field>
+          <span className='label'>Allowed?</span>
+        </div>
         {
           this.state.additionalProperties.allowed &&
           <Form.Field>
