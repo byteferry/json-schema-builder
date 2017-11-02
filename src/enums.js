@@ -34,3 +34,8 @@ exports.arrayTypeOptions = [
   {key: 'array-single', value: 'single', text: 'Single'},
   {key: 'array-collection', value: 'collection', text: 'Collection'}
 ]
+
+exports.propertyTypeOptions = [
+  {key: 'named', value: 'named', text: 'Named'},
+  {key: 'pattern', value: 'pattern', text: 'Pattern'}
+]

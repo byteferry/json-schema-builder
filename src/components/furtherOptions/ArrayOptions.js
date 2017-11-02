@@ -33,7 +33,7 @@ class ArrayOptions extends Component {
         minItems: false,
         maxItems: false,
         uniqueItems: false,
-        additionalItems: false
+        additionalItems: false // QUESTION: Can this be an object?
       },
       arrayType: null,
       single: null,
@@ -246,6 +246,7 @@ class ArrayOptions extends Component {
   }
 
   render () {
+    // TODO: Make sure additionalItems can be set to false
     return (
       <div>
         <Header as='h4'>Array Options</Header>
