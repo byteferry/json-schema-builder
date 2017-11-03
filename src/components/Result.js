@@ -34,11 +34,14 @@ class Result extends Component {
    * When the component recieves new props, update the schema if required
    * @param  {object} nextProps The incoming, updated props
    */
-  componentWillReceiveProps (nextProps) {
-    // TODO: Don't bother updating if the new schema is the same as the old
-    // schema
-    if (nextProps.schema) {
+  shouldComponentUpdate (nextProps, nextState) {
+    if (nextProps.schema === this.props.schema && nextState.schemaString === this.state.schemaString) {
+      return false
+    } else if (nextProps.schema !== this.props.schema) {
       this.convertToString(nextProps.schema)
+      return false
+    } else {
+      return true
     }
   }
 
