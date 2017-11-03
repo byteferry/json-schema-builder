@@ -28,6 +28,7 @@ class ObjectOptions extends Component {
     //    propertyType: enums['named', 'pattern']
     //    name: String
     //    type: enums['number', 'string', 'boolean', 'null', 'object', 'array']
+    //    dependencies: {}
     // }
     this.state = {
       type: 'object',
@@ -41,8 +42,8 @@ class ObjectOptions extends Component {
       },
       properties: [],
       additionalProperties: {
-        allowed: false,
-        type: null
+        allowed: true,
+        type: 'any'
       }
     }
   }
@@ -57,17 +58,21 @@ class ObjectOptions extends Component {
     this.setState(prevState => {
       let options = Object.assign({}, prevState.options)
       let additionalProperties = Object.assign({}, prevState.additionalProperties)
+      let properties = prevState.properties
+
       if (name.indexOf('additionalProperties') > -1) {
         if (name.split('-')[1] === 'allowed') {
           additionalProperties.allowed = checked
         } else {
           additionalProperties.type = value
         }
+      } else if (name.indexOf('dependency') > -1) {
+        let splitName = name.split('-')
+        properties[parseInt(splitName[1], 10)].dependencies[splitName[2]] = checked
       } else {
         options[name] = value
       }
-
-      return {options, additionalProperties}
+      return {options, additionalProperties, properties}
     })
   }
 
@@ -132,6 +137,8 @@ class ObjectOptions extends Component {
     let properties = {}
     let patternProperties = {}
     let required = []
+    let dependencies = {}
+
     for (var i = 0; i < this.state.properties.length; i++) {
       let item = this.state.properties[i]
 
@@ -147,7 +154,15 @@ class ObjectOptions extends Component {
         }
 
         // extract the property options
-        Object.assign(properties[item.name], this.refs[`_further-${i}`].extractOptions())
+        if (!['boolean', 'null'].includes(item.type)) {
+          Object.assign(properties[item.name], this.refs[`_further-${i}`].extractOptions())
+        }
+
+        // handle the dependencies
+        let itemDependecies = Object.keys(item.dependencies).filter(key => item.dependencies[key])
+        if (itemDependecies.length) {
+          dependencies[item.name] = itemDependecies
+        }
       } else {
         // Add a new patternProperty
         patternProperties[item.name] = {
@@ -155,12 +170,23 @@ class ObjectOptions extends Component {
         }
 
         // extract the property options
-        Object.assign(patternProperties[item.name], this.refs[`_further-${i}`].extractOptions())
+        if (!['boolean', 'null'].includes(item.type)) {
+          Object.assign(patternProperties[item.name], this.refs[`_further-${i}`].extractOptions())
+        }
       }
     }
-    options.properties = properties
-    options.required = required
-    options.patternProperties = patternProperties
+    if (Object.keys(properties).length) {
+      options.properties = properties
+    }
+    if (required.length) {
+      options.required = required
+    }
+    if (Object.keys(patternProperties).length) {
+      options.patternProperties = patternProperties
+    }
+    if (Object.keys(dependencies).length) {
+      options.dependencies = dependencies
+    }
 
     // sort out the additionalProperties
     if (!this.state.additionalProperties.allowed) {
@@ -189,7 +215,8 @@ class ObjectOptions extends Component {
       let newItem = {
         type: null,
         propertyType: null,
-        required: null
+        required: null,
+        dependencies: {}
       }
       properties.push(newItem)
       return {properties}
@@ -240,6 +267,38 @@ class ObjectOptions extends Component {
         break
     }
     return content
+  }
+
+  /**
+   * This function renders a group of checkboxes to allow
+   * the user to decide which properties are dependent upon this one
+   * @param  {number} index The index of the property which has called the function
+   * @return {object}       A JSX element with the checkboxes
+   */
+  renderDependencies (index) {
+    return (
+      <div>
+        <Header as='h4'>Dependencies</Header>
+        <Form.Group>
+          {
+            this.state.properties.map((property, mapIndex) => {
+              if (property.propertyType === 'named' && mapIndex !== index && property.name) {
+                return (
+                  <Form.Checkbox
+                    key={`dependency-${index}-${property.name}`}
+                    name={`dependency-${index}-${property.name}`}
+                    onChange={this.handleChange}
+                    label={property.name}
+                    />
+                )
+              } else {
+                return null
+              }
+            })
+          }
+        </Form.Group>
+      </div>
+    )
   }
 
   /**
@@ -301,6 +360,10 @@ class ObjectOptions extends Component {
             </Grid.Column>
           }
         </Grid>
+        {
+          item.propertyType === 'named' &&
+          this.renderDependencies(index)
+        }
         <Form.Field>
           <label>Type</label>
           <Form.Select
