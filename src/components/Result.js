@@ -3,11 +3,17 @@ import PropTypes from 'prop-types'
 import { findDOMNode } from 'react-dom'
 import { Segment, Header } from 'semantic-ui-react'
 import highlight from 'highlight.js'
-import 'highlight.js/styles/github.css'
 
 class Result extends Component {
-  constructor () {
-    super()
+  constructor (props) {
+    super(props)
+
+    // require the css for highlighting
+    try {
+      require(`highlight.js/styles/${props.highlightStyle}.css`)
+    } catch (e) {
+      require('highlight.js/styles/github.css')
+    }
 
     // Bind functions to be used
     this.convertToString = this.convertToString.bind(this)
@@ -87,7 +93,8 @@ class Result extends Component {
 }
 
 Result.propTypes = {
-  schema: PropTypes.object
+  schema: PropTypes.object,
+  highlightStyle: PropTypes.string
 }
 
 export default Result

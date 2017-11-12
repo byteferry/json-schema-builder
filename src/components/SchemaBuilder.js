@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import { Segment, Header } from 'semantic-ui-react'
 import Builder from './Builder'
 import Result from './Result'
@@ -28,10 +29,15 @@ class SchemaBuilder extends Component {
           <Header as='h1'>JSON Schema Builder</Header>
         </Segment>
         <Builder setSchema={this.setSchema} />
-        <Result schema={this.state.schema} />
+        <Result schema={this.state.schema} highlightStyle={this.props.highlightStyle} />
       </div>
     )
   }
+}
+
+SchemaBuilder.propTypes = {
+  schema: PropTypes.object,
+  highlightStyle: PropTypes.string
 }
 
 export default SchemaBuilder
