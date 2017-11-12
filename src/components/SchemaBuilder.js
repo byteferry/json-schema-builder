@@ -2,9 +2,9 @@ import React, { Component } from 'react'
 import { Segment, Header } from 'semantic-ui-react'
 import Builder from './Builder'
 import Result from './Result'
-import '../styles/App.css'
+import '../styles/SchemaBuilder.css'
 
-class App extends Component {
+class SchemaBuilder extends Component {
   constructor () {
     super()
 
@@ -23,7 +23,7 @@ class App extends Component {
 
   render () {
     return (
-      <div className='App'>
+      <div className='SchemaBuilder'>
         <Segment attached='top'>
           <Header as='h1'>JSON Schema Builder</Header>
         </Segment>
@@ -34,4 +34,4 @@ class App extends Component {
   }
 }
 
-export default App
+export default SchemaBuilder
